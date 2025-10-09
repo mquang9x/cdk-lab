@@ -1,3 +1,3 @@
 {
-  "app": "npx ts-node bin/s3-test.ts"
+  "app": "npx ts-node bin/website.ts"
 }
