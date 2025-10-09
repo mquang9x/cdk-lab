@@ -23,6 +23,7 @@ export class WebsiteStack extends cdk.Stack {
       publicReadAccess: true,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ACLS, // uncheck block public access
       removalPolicy: cdk.RemovalPolicy.DESTROY, // delete bucket when destroy stack
+      autoDeleteObjects: true, // delete file when destroy stack
 });
 
 
@@ -58,5 +59,5 @@ export class WebsiteStack extends cdk.Stack {
       description: 'URL of website was distributed by CloudFront',
     });
   }
-}s
+}
 
