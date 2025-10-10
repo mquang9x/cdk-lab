@@ -8,6 +8,9 @@ env:
   AWS_REGION: ap-southeast-1
   CDK_STACK_NAME: WebsiteStack
   CONTEXT_BUCKET_NAME: quang
+permissions:
+    id-token: write   # This is required for requesting the JWT
+    contents: read  
 
 jobs:
   deploy:
