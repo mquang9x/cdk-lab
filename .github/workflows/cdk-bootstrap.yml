@@ -1,0 +1,52 @@
+name: CDK Bootstrap 
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type BOOTSTRAP to proceed'
+        required: true
+        default: 'NO'
+
+env:
+  AWS_REGION: ap-southeast-1
+
+jobs:
+  bootstrap:
+    if: ${{ github.event.inputs.confirm == 'BOOTSTRAP' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::669459364263:role/GHA   
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: gha-cdk-bootstrap
+
+      - name: Show identity
+        run: aws sts get-caller-identity
+
+      - name: Check CDKToolkit stack
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          if aws cloudformation describe-stacks --stack-name CDKToolkit --region "${AWS_REGION}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bootstrap (only if not exists)
+        if: steps.check.outputs.exists == 'false'
+        run: npx cdk bootstrap aws://669459364263/${{ env.AWS_REGION }}       
+
+      - name: Skip (already bootstrapped)
+        if: steps.check.outputs.exists == 'true'
+        run: echo "CDKToolkit already exists. Skipping bootstrap."

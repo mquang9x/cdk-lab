@@ -1,4 +1,4 @@
-name: CDK Check (OIDC)
+name: CDK Check 
 
 on:
   pull_request:
