@@ -22,10 +22,9 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci
-
-       Access Keys 
-       - uses: aws-actions/configure-aws-credentials@v4
-         with:
+      
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
            aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
            aws-region:            ${{ env.AWS_REGION }}
@@ -33,5 +32,3 @@ jobs:
 
       - run: npx cdk synth -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
       - run: npx cdk diff  ${{ env.CDK_STACK_NAME }} -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
-YAML
-
