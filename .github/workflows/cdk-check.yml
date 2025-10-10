@@ -1,0 +1,37 @@
+name: CDK Check
+on:
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-southeast-1
+  CDK_STACK_NAME: WebsiteStack
+  CONTEXT_BUCKET_NAME: quang
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci
+
+       Access Keys 
+       - uses: aws-actions/configure-aws-credentials@v4
+         with:
+           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region:            ${{ env.AWS_REGION }}
+
+
+      - run: npx cdk synth -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
+      - run: npx cdk diff  ${{ env.CDK_STACK_NAME }} -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
+YAML
+

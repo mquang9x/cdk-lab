@@ -1,0 +1,20 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "08dad1a56545223fca197eba1d1add6ee846a4d6f92d1cdde551d65a412dd2ee": {
+      "displayName": "S3BucketStack Template",
+      "source": {
+        "path": "S3BucketStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "current_account-current_region-8bb033d1": {
+          "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
+          "objectKey": "08dad1a56545223fca197eba1d1add6ee846a4d6f92d1cdde551d65a412dd2ee.json",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

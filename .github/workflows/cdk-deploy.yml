@@ -1,0 +1,52 @@
+name: CDK Deploy
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-southeast-1
+  CDK_STACK_NAME: WebsiteStack
+  CONTEXT_BUCKET_NAME: quang
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # cần cho OIDC
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm ci
+
+       - name: Configure AWS credentials (Access Keys)
+         uses: aws-actions/configure-aws-credentials@v4
+         with:
+           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region:            ${{ env.AWS_REGION }}
+
+  
+      # (Optional) CDK bootstrap if this is new environment ( only 1 time)
+      # - name: CDK Bootstrap (optional)
+      #   run: npx cdk bootstrap aws://123456789012/${{ env.AWS_REGION }}
+
+      - name: CDK synth
+        run: npx cdk synth -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
+
+      - name: CDK diff
+        run: npx cdk diff ${{ env.CDK_STACK_NAME }} -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
+
+      - name: CDK deploy
+        run: npx cdk deploy ${{ env.CDK_STACK_NAME }} --require-approval never -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
+YAML
+

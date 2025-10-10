@@ -12,5 +12,5 @@
     "outDir": "dist"
   },
   "include": ["bin/**/*.ts", "lib/**/*.ts", "module/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules","cdk.out"]
 }
