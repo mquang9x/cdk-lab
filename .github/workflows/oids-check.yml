@@ -1,0 +1,30 @@
+name: OIDC STS Check
+
+on:
+  workflow_dispatch: {}   # chạy thủ công từ tab Actions
+
+env:
+  AWS_REGION: ap-southeast-1
+
+jobs:
+  sts-check:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write     # BẮT BUỘC cho OIDC
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::669459364263:role/GHA   # <-- đổi ACCOUNT_ID & role cho đúng
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: gha-oidc-sts-check
+
+      - name: Verify identity (STS)
+        run: |
+          echo "===> aws sts get-caller-identity"
+          aws sts get-caller-identity
