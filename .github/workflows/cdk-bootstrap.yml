@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type BOOTSTRAP to proceed'
+        description: 'Create BOOTSTRAP?'
+        type: boolean
         required: true
-        default: 'NO'
+        default: false
 
 env:
   AWS_REGION: ap-southeast-1
@@ -43,7 +44,7 @@ jobs:
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Bootstrap (only if not exists)
+      - name: Bootstrap (only if it does not exist)
         if: steps.check.outputs.exists == 'false'
         run: npx cdk bootstrap aws://669459364263/${{ env.AWS_REGION }}       
 
