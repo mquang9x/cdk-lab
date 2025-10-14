@@ -1,0 +1,46 @@
+name: CDK Destroy
+
+on:
+  workflow_dispatch:  
+
+env:
+  AWS_REGION: ap-southeast-1
+  CDK_STACK_NAME: WebsiteStack
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # For OIDC
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4  # 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"  
+      - run: npm ci  
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::669459364263:role/GHA
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: GHA
+
+      - name: Verify identity
+        run: aws sts get-caller-identity  
+
+      - name: Bootstrap if needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if aws cloudformation describe-stacks --stack-name CDKToolkit --region "${AWS_REGION}" >/dev/null 2>&1; then
+            echo "CDKToolkit exists. Skip bootstrap."
+          else
+            echo "CDKToolkit not found. Running bootstrap..."
+            npx cdk bootstrap aws://669459364263/${AWS_REGION}
+          fi
+
+      - name: CDK destroy
+        run: npx cdk destroy ${{ env.CDK_STACK_NAME }} --force --no-approve
