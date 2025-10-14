@@ -8,7 +8,6 @@ on:
 env:
   AWS_REGION: ap-southeast-1
   CDK_STACK_NAME: WebsiteStack
-  CONTEXT_BUCKET_NAME: quang
 
 jobs:
   deploy:
@@ -52,9 +51,6 @@ jobs:
 
       - name: CDK diff (info)
         run: npx cdk diff ${{ env.CDK_STACK_NAME }}
-
-      - name: CDK deploy
-        run: npx cdk deploy ${{ env.CDK_STACK_NAME }} --require-approval never -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
 
       - name: CDK deploy
         run: npx cdk deploy ${{ env.CDK_STACK_NAME }} --require-approval never -c bucketName="${{ env.CONTEXT_BUCKET_NAME }}"
