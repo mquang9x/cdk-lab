@@ -8,7 +8,7 @@ on:
 env:
   AWS_REGION: ap-southeast-1
   CDK_STACK_NAME: WebsiteStack
-  CONTEXT_BUCKET_NAME: quang
+  CONTEXT_BUCKET_NAME: levi
 
 jobs:
   deploy:
